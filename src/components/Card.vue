@@ -1,7 +1,11 @@
 <template>
-  <div class="card mx-1 mb-3" v-for="x in data" :key="x.id">
-    <img class="poster" :src="x.image" :alt="x.name" />
-    <div class="p-2">
+  <Toast type="is-primary" :message="message" @closeToast="closeToast" />
+  <div class="card-item mx-1 mb-3" v-for="x in data" :key="x.id">
+    <div class="relative">
+      <img class="poster" :src="x.image" :alt="x.name" />
+      <span class="absolute top-left card-item-id">{{ x.id }}</span>
+    </div>
+    <div class="px-2 pb-2">
       <div class="is-size-5">{{ x.name }}</div>
       <div class="is-flex is-justify-content-space-between is-size-7">
         <span>TIPO: {{ x.type }}</span>
@@ -9,65 +13,100 @@
 
       <div class="is-flex is-justify-content-space-between is-size-7">
         <span>LVL: {{ x.level }}</span>
-        <span>EXP: {{ x.exp }}</span>
-        <span>NEX: {{ x.nextLevel }}</span>
+        <span v-if="x.exp">EXP: {{ x.exp }}</span>
+        <span v-if="x.nextLevel">NEX: {{ x.nextLevel }}</span>
       </div>
+      <button
+        style="width: 100%"
+        class="button is-link"
+        @click="
+          addItem(
+            table === 'monsters'
+              ? 'monsters'
+              : table === 'heroes'
+              ? 'heroes'
+              : table === 'maps'
+              ? 'maps'
+              : '',
+            x
+          )
+        "
+      >
+        Selecionar
+      </button>
     </div>
-    <button
-      class="button is-link"
-      @click="
-        table === 'monsters'
-          ? addMonsters(x)
-          : table === 'heroes'
-          ? addHero(x)
-          : table === 'maps'
-          ? addMap(x)
-          : alert('error-98375934')
-      "
-    >
-      {{ x.name }}
-    </button>
   </div>
 </template>
 
 <script>
+import Toast from '@/components/Toast.vue';
 import { useStore } from 'vuex';
-import { computed } from '@vue/reactivity';
+import { computed, ref } from 'vue';
 
 export default {
   name: 'Card',
   props: ['data', 'table'],
+  components: { Toast },
   data() {
-    return {
-      item: {}
-    };
+    return {};
   },
   setup() {
     const store = useStore();
+    const message = ref('');
 
-    function addHero(item) {
-      store.commit('addHero', item);
+    function addItem(table, item) {
+      let func =
+        table === 'heroes'
+          ? 'addHero'
+          : table === 'monsters'
+          ? 'addMonsters'
+          : table === 'maps'
+          ? 'addMap'
+          : '';
+      store.commit(func, item);
+      message.value = 'Adicionado com sucesso';
+      setTimeout(() => closeToast(), 1000);
     }
 
-    function addMonsters(item) {
-      store.commit('addMonsters', item);
-    }
-    function addMap(item) {
-      store.commit('addMap', item);
+    function closeToast() {
+      message.value = '';
     }
 
     let monsters = computed(() => store.state.user.monsters);
 
-    return { addHero, addMonsters, addMap, monsters };
+    return {
+      monsters,
+      message,
+      closeToast,
+      addItem
+    };
   }
 };
 </script>
 
 <style>
-.card {
+.card-item {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+
+  border-radius: 3px;
+}
+.card-item:hover {
+  background: rgba(72, 95, 199, 0.1);
+}
+.card-item.active {
+  outline: 2px solid #485fc7;
+}
+
+.card-item-id {
+  color: rgba(27, 27, 27, 0.7);
+  background: rgba(202, 202, 202, 0.2);
+  width: 1rem;
+  display: block;
+  text-align: center;
+  font-size: 0.6rem;
 }
 
 .list-item {

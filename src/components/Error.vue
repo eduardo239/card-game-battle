@@ -1,6 +1,6 @@
 <template>
   <article :class="'message ' + type" v-if="error">
-    <div class="message-body">Error : {{ error }}</div>
+    <div class="message-body">Aviso : {{ error }}</div>
   </article>
 </template>
 

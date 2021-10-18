@@ -20,6 +20,19 @@ export default {
 <style>
 @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css';
 @import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css';
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+.page {
+  height: calc(100vh - 12px);
+  width: 100%;
+  padding: 0.5rem;
+}
+
 body {
   background: #fefefe;
   font-weight: 400;
@@ -70,11 +83,17 @@ small,
 .text_small {
   font-size: 0.8rem;
 }
-.page {
-  height: calc(100vh - 12px);
-  width: 100%;
-}
 
+.absolute {
+  position: absolute;
+}
+.relative {
+  position: relative;
+}
+.top-left {
+  top: 0;
+  left: 0;
+}
 /* Enter and leave animations can use different */
 /* durations and timing functions.              */
 .slide-fade-enter-active {

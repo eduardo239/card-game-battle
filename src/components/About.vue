@@ -6,7 +6,7 @@
   <HelloWorld msg="Welcome to Your Vue.js App" />
   <Test />
   <div v-if="showModal">
-    <Modal
+    <ModalTeste
       :header="header"
       text="Texto do modal"
       theme="sale"
@@ -19,7 +19,7 @@
       </template>
       <h1>Ninjas</h1>
       <a href=""></a>
-    </Modal>
+    </ModalTeste>
   </div>
   <!-- click event modifiers -->
   <button class="button is-primary is-rounded" @click.left="toggleModal">
@@ -42,7 +42,7 @@
 <script>
 import HelloWorld from './HelloWorld.vue';
 import Test from './TestComponent.vue';
-import Modal from './Modal.vue';
+import ModalTeste from './ModalTeste.vue';
 import Post from './Post.vue';
 
 export default {
@@ -50,7 +50,7 @@ export default {
   components: {
     HelloWorld,
     Test,
-    Modal,
+    ModalTeste,
     Post
   },
   data() {
