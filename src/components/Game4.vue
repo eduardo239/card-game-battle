@@ -4,10 +4,16 @@
       <Navigation />
       <h4>Jogar</h4>
 
-      <Error :error="isEmpty(hero) && 'Faltando o herói'" type="is-warning" />
-      <Error :error="isEmpty(map) && 'Faltando o mapa'" type="is-warning" />
       <Error
-        :error="monsters.length === 0 && 'Faltando os monstros'"
+        :error="isEmpty(hero) && 'O herói não foi escolhido'"
+        type="is-warning"
+      />
+      <Error
+        :error="isEmpty(map) && 'O mapa não foi escolhido'"
+        type="is-warning"
+      />
+      <Error
+        :error="monsters.length === 0 && 'Os monstros não foram escolhidos'"
         type="is-warning"
       />
 
@@ -16,7 +22,7 @@
           <div class="button is-danger" @click="play">
             Play
           </div>
-          <div class="button is-info">Loja</div>
+          <div class="button is-info" @click="toggleModal">Loja</div>
           <div class="button is-warning">Reiniciar</div>
         </div>
 
@@ -43,15 +49,20 @@
                     : position === 'START'
                     ? 'start'
                     : ''
-                } ${i == current ? 'current' : ''}`
+                } ${i == current ? 'current ' : ''} ${
+                  current > i ? 'passed' : ''
+                }`
               "
             >
               {{ position }}
-
               <span class="absolute top-left card-item-id">{{ i }}</span>
             </div>
           </div>
         </div>
+
+        <!-- shop -->
+        {{ showModal }}
+        <ModalShop v-if="showModal" @close="toggleModal" />
       </main>
 
       <hr />
@@ -102,6 +113,7 @@
 <script>
 import Navigation from '@/components/Navigation.vue';
 import Error from '@/components/Error.vue';
+import ModalShop from '@/components/ModalShop.vue';
 import { useStore } from 'vuex';
 import { computed } from '@vue/reactivity';
 import { isEmpty } from '@/utils';
@@ -109,11 +121,17 @@ import { isEmpty } from '@/utils';
 export default {
   name: 'Card',
   props: ['data'],
-  components: { Navigation, Error },
+  components: { ModalShop, Navigation, Error },
   data() {
     return {
-      item: {}
+      item: {},
+      showModal: false
     };
+  },
+  methods: {
+    toggleModal() {
+      this.showModal = !this.showModal;
+    }
   },
   setup() {
     const store = useStore();
@@ -193,5 +211,10 @@ export default {
 .position.boss {
   background: black;
   color: #fff;
+}
+
+.passed {
+  background: #161616 !important;
+  color: #919191 !important;
 }
 </style>

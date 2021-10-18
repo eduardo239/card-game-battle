@@ -48,15 +48,7 @@ export default createStore({
 
       state.game.map = { ...payload };
 
-      let ar = [
-        '._._._._.',
-        '._._._._.',
-        'FIGHT',
-        'FIGHT',
-        'FIGHT',
-        'GIFT',
-        'TRAP'
-      ];
+      let ar = ['._.', '._.', 'FIGHT', 'FIGHT', 'FIGHT', 'GIFT', 'TRAP'];
       for (let i = 0; i < payload.size; i++) {
         state.game.positions.push(ar[Math.floor(Math.random() * ar.length)]);
       }
