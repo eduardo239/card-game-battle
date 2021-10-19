@@ -7,3 +7,7 @@ export function isEmpty(obj) {
 
   return JSON.stringify(obj) === JSON.stringify({});
 }
+
+export function randomNumber(max, min) {
+  return Math.floor(Math.random() * max + min);
+}

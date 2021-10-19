@@ -2,11 +2,11 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import Home from '@/Home.vue';
 import About from '@/components/About.vue';
-import Game from '@/components/Game.vue';
-import Game2 from '@/components/Game2.vue';
-import Game3 from '@/components/Game3.vue';
-import Game4 from '@/components/Game4.vue';
-import Game5 from '@/components/Game5.vue';
+import Game from '@/views/Game.vue';
+import Game2 from '@/views/Game2.vue';
+import Game3 from '@/views/Game3.vue';
+import Game4 from '@/views/Game4.vue';
+import Game5 from '@/views/Game5.vue';
 import Test from '@/components/Test.vue';
 import NotFound from '@/components/NotFound.vue';
 

@@ -1,4 +1,5 @@
 import { createStore } from 'vuex';
+import { randomNumber } from '@/utils';
 
 export default createStore({
   state: {
@@ -11,7 +12,8 @@ export default createStore({
       map: {},
       positions: [],
       position: 0,
-      dice: 0
+      dice: 0,
+      monsters: []
     },
     fight: {
       hero: {
@@ -55,6 +57,10 @@ export default createStore({
       state.game.positions[0] = 'START';
       state.game.positions[state.game.positions.length - 1] = 'BOSS';
     },
+    loadMonsters(state, payload) {
+      state.game.monsters = payload.monsters;
+    },
+    // TODO: remove
     randomNumber(state, payload) {
       state.game.dice = Math.floor(Math.random() * payload.max + payload.min);
     },
@@ -64,19 +70,41 @@ export default createStore({
         alert('END');
       }
       // CHECK POSITION:
+      let pos = state.game.positions[state.game.position];
 
-      // this.checkPosition();
+      if (pos === 'FIGHT') {
+        console.log('Lutando...');
 
-      // if (this.checkPosition() === 'fight') {
-      //   this.isFigthing = true;
+        state.status.isFighting = true;
 
-      //   // get random monster
-      //   this.enemyMonsterFight = this.getRandomEnemy();
-      // } else if (this.checkPosition() === 'gift') {
-      //   // TODO: gift
-      // } else if (this.checkPosition() === 'boss') {
-      //   // TODO: boss
-      // }
+        if (state.user.monsters[0]) {
+          state.fight.hero.monster = state.user.monsters[0];
+        } else {
+          alert('sem monstros');
+        }
+
+        // seleciona um monstro aleatório
+        let x = randomNumber(state.game.monsters.length, 1);
+        state.fight.enemy.monster = { ...state.game.monsters[x - 1] };
+      } else if (pos === 'GIFT') {
+        console.log('gift...');
+      } else if (pos === 'TRAP') {
+        console.log('trap...');
+      } else if (pos === 'BOSS') {
+        console.log('Boss...');
+      }
+    },
+    damage(state, payload) {
+      // fake damage
+      state.fight.hero.monster.hp -= 30;
+
+      if (payload.at === 'enemy') {
+        state.fight.enemy.monster.hp -= payload.damage;
+        if (state.fight.enemy.monster.hp < 0) {
+          state.status.isFighting = false;
+          console.log('end fight');
+        }
+      }
     }
   }
 });

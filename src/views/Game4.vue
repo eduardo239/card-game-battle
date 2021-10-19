@@ -31,6 +31,9 @@
         mapa:
         {{ positions.length }}
 
+        <!-- fight -->
+        <Fight v-if="isFighting" />
+
         <!-- positions -->
         <div class="is-flex is-flex-wrap-wrap ">
           <div class="" v-for="(position, i) in positions" :key="i">
@@ -54,14 +57,13 @@
                 }`
               "
             >
-              {{ position }}
+              {{ current > i ? '...' : position }}
               <span class="absolute top-left card-item-id">{{ i }}</span>
             </div>
           </div>
         </div>
 
         <!-- shop -->
-        {{ showModal }}
         <ModalShop v-if="showModal" @close="toggleModal" />
       </main>
 
@@ -114,14 +116,17 @@
 import Navigation from '@/components/Navigation.vue';
 import Error from '@/components/Error.vue';
 import ModalShop from '@/components/ModalShop.vue';
+import Fight from '@/components/Fight.vue';
 import { useStore } from 'vuex';
-import { computed } from '@vue/reactivity';
+import { computed } from 'vue/';
 import { isEmpty } from '@/utils';
+import { onMounted } from '@vue/runtime-core';
+import { getData } from '@/composables/getData';
 
 export default {
-  name: 'Card',
+  name: 'Game',
   props: ['data'],
-  components: { ModalShop, Navigation, Error },
+  components: { ModalShop, Navigation, Error, Fight },
   data() {
     return {
       item: {},
@@ -143,11 +148,22 @@ export default {
     let positions = computed(() => store.state.game.positions);
     let current = computed(() => store.state.game.position);
     let dice = computed(() => store.state.game.dice);
+    let isFighting = computed(() => store.state.status.isFighting);
 
     function play() {
       store.commit('randomNumber', { max: 6, min: 1 });
       store.commit('getPosition', dice.value);
     }
+
+    function loadMonsters() {
+      const { items, load } = getData('monsters');
+
+      load();
+      store.commit('loadMonsters', { monsters: items });
+    }
+    onMounted(() => {
+      loadMonsters();
+    });
 
     return {
       hero,
@@ -158,7 +174,8 @@ export default {
       current,
       dice,
       isEmpty,
-      play
+      play,
+      isFighting
     };
   }
 };
