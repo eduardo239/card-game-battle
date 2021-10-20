@@ -5,6 +5,7 @@
       <img class="poster" :src="x.image" :alt="x.name" />
       <span class="absolute top-left card-item-id">{{ x.id }}</span>
     </div>
+
     <div class="px-2 pb-2">
       <div class="is-size-5">{{ x.name }}</div>
       <div class="is-flex is-justify-content-space-between is-size-7">
@@ -18,6 +19,7 @@
         <span v-if="x.price">PREÇO: {{ x.price }}</span>
         <span v-if="x.size">TAMANHO: {{ x.size }}</span>
       </div>
+
       <button
         style="width: 100%"
         class="button is-link"

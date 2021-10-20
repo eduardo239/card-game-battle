@@ -65,7 +65,7 @@ export default createStore({
 
       state.game.map = { ...payload };
 
-      let ar = ['._.', 'FIGHT', '._.', 'FIGHT', 'GIFT', 'GIFT', 'TRAP'];
+      let ar = ['._.', 'FIGHT', 'FIGHT', 'FIGHT', 'FIGHT', 'GIFT', 'TRAP'];
       for (let i = 0; i < payload.size; i++) {
         state.game.positions.push(ar[Math.floor(Math.random() * ar.length)]);
       }
@@ -91,8 +91,20 @@ export default createStore({
         }
       }
     },
-    giftItem(state, payload) {
+    useItem(state, payload) {
       console.log(payload);
+      if (payload.item.type === 'health') {
+        state.fight.hero.monster.hp += parseInt(payload.item.value);
+        state.user.items.splice(payload.i, 1);
+      } else if (payload.item.type === 'mana') {
+        state.fight.hero.monster.mp += parseInt(payload.item.value);
+        state.user.items.splice(payload.i, 1);
+      } else if (payload.item.type === 'bomb') {
+        state.fight.enemy.monster.hp -= parseInt(payload.item.value);
+        state.user.items.splice(payload.i, 1);
+      }
+    },
+    giftItem(state, payload) {
       state.user.items.push({ ...payload });
       state.game.gift = { ...payload };
     },

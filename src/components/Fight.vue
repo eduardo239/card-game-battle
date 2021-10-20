@@ -2,7 +2,9 @@
   <h4>Luta</h4>
   <div class="fight buttons">
     <button class="button is-danger" @click="hit">ATACAR</button>
-    <button class="button is-info">USAR ITEM</button>
+    <button class="button is-info" @click="$emit('toggleUseItemModal')">
+      USAR ITEM
+    </button>
     <!-- TODO: useItem -->
   </div>
 
@@ -20,6 +22,7 @@ export default {
   name: 'Fight',
   components: { Info },
   props: ['isFighting'],
+  emits: ['toggleUseItemModal'],
   setup() {
     const store = useStore();
 

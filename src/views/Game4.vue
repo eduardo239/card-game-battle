@@ -34,17 +34,25 @@
           >
             Play
           </button>
-          <button class="button is-info" @click="toggleModal">Loja</button>
+          <button
+            class="button is-info"
+            @click="toggleModal"
+            :disabled="isFighting"
+          >
+            Loja
+          </button>
           <button class="button is-warning" @click="restart">Reiniciar</button>
         </div>
 
         <!-- actual postion -->
-        Posição atual: {{ current }} - Valor do dado: {{ dice }} - Tamanho do
-        mapa: {{ positions.length }} - items {{ items.length }} - Gift
-        {{ isGifting }}
+        <small class="mo">
+          Posição atual: {{ current }} - Valor do dado: {{ dice }} - Tamanho do
+          mapa: {{ positions.length }} - items {{ items.length }} - Gift
+          {{ isGifting }}
+        </small>
 
         <!-- fight -->
-        <Fight v-if="isFighting" />
+        <Fight v-if="isFighting" @toggleUseItemModal="toggleUseItemModal" />
 
         <!-- gift -->
         <ModalGift v-if="isGifting" />
@@ -54,6 +62,9 @@
 
         <!-- positions -->
         <Positions :positions="positions" :current="current" />
+
+        <!-- useItem -->
+        <ModalUseItem v-if="showUseItemModal" @close="toggleUseItemModal" />
       </main>
 
       <hr />
@@ -81,6 +92,7 @@ import ModalShop from '@/components/ModalShop.vue';
 import Fight from '@/components/Fight.vue';
 import ModalGift from '@/components/ModalGift.vue';
 import Positions from '@/components/Positions.vue';
+import ModalUseItem from '@/components/ModalUseItem.vue';
 import { useStore } from 'vuex';
 import { computed, onMounted } from 'vue';
 import { getData } from '@/composables/getData';
@@ -91,6 +103,7 @@ export default {
   props: ['data'],
   components: {
     ModalShop,
+    ModalUseItem,
     Navigation,
     Error,
     Fight,
@@ -101,12 +114,16 @@ export default {
   },
   data() {
     return {
-      showModal: false
+      showModal: false,
+      showUseItemModal: false
     };
   },
   methods: {
     toggleModal() {
       this.showModal = !this.showModal;
+    },
+    toggleUseItemModal() {
+      this.showUseItemModal = !this.showUseItemModal;
     }
   },
   setup() {

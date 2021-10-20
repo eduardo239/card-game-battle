@@ -1,9 +1,10 @@
 <template>
   <div class="modal" @click.self="closeModal">
     <div class="modal-div">
-      saldo: {{ heroMoney }}
-
-      <div class="is-flex is-flex-wrap-wrap">
+      <h4 style="background: white; text-align: center;">
+        saldo: {{ heroMoney }}
+      </h4>
+      <div class="is-flex is-flex-wrap-wrap is-justify-content-center">
         <Card :data="gameItems" table="buyItem" />
       </div>
     </div>
@@ -14,6 +15,7 @@
 import Card from '@/components/Card.vue';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
+
 export default {
   name: 'ModalShop',
   components: { Card },

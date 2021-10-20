@@ -149,7 +149,6 @@ small,
 
 .modal-div {
   background: #fefefe;
-
   padding: 1rem;
 }
 

@@ -7,7 +7,11 @@
       <Error :error="error" type="is-success" />
       <Loading :isLoading="!!error && !items" />
 
-      <div class="is-flex is-flex-wrap-wrap">
+      <div
+        :class="
+          `is-flex is-flex-wrap-wrap ${monsters.length > 2 ? 'disabled' : ''}`
+        "
+      >
         <Card :data="items" table="monsters" />
       </div>
 
