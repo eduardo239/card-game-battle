@@ -8,13 +8,15 @@
     <div class="px-2 pb-2">
       <div class="is-size-5">{{ x.name }}</div>
       <div class="is-flex is-justify-content-space-between is-size-7">
-        <span>TIPO: {{ x.type }}</span>
+        <span v-if="x.type">TIPO: {{ x.type.toUpperCase() }}</span>
       </div>
 
-      <div class="is-flex is-justify-content-space-between is-size-7">
-        <span>LVL: {{ x.level }}</span>
+      <div class="is-flex is-justify-content-space-between is-size-7 mb-5">
+        <span v-if="x.level">LVL: {{ x.level }}</span>
         <span v-if="x.exp">EXP: {{ x.exp }}</span>
         <span v-if="x.nextLevel">NEX: {{ x.nextLevel }}</span>
+        <span v-if="x.price">PREÇO: {{ x.price }}</span>
+        <span v-if="x.size">TAMANHO: {{ x.size }}</span>
       </div>
       <button
         style="width: 100%"
@@ -27,6 +29,10 @@
               ? 'heroes'
               : table === 'maps'
               ? 'maps'
+              : table === 'items'
+              ? 'items'
+              : table === 'buyItem'
+              ? 'buyItem'
               : '',
             x
           )
@@ -54,6 +60,8 @@ export default {
     const store = useStore();
     const message = ref('');
 
+    let monsters = computed(() => store.state.user.monsters);
+
     function addItem(table, item) {
       let func =
         table === 'heroes'
@@ -62,17 +70,19 @@ export default {
           ? 'addMonsters'
           : table === 'maps'
           ? 'addMap'
+          : table === 'items'
+          ? 'addItem'
+          : table === 'buyItem'
+          ? 'buyItem'
           : '';
       store.commit(func, item);
-      message.value = 'Adicionado com sucesso';
+      message.value = 'Item adicionado com sucesso';
       setTimeout(() => closeToast(), 1000);
     }
 
     function closeToast() {
       message.value = '';
     }
-
-    let monsters = computed(() => store.state.user.monsters);
 
     return {
       monsters,
@@ -86,6 +96,8 @@ export default {
 
 <style>
 .card-item {
+  background: #fefefe;
+
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -110,9 +122,17 @@ export default {
 }
 
 .list-item {
+  display: grid;
+  grid-template-columns: auto 3fr repeat(6, auto);
+  align-items: center;
+  justify-content: space-between;
   padding: 8px;
   margin-bottom: 3px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
-    rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+}
+.list-item > * {
+  margin-right: 4px;
+  font-family: var(--mo);
+  font-size: 0.85rem;
 }
 </style>

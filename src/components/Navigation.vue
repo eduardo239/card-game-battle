@@ -1,16 +1,16 @@
 <template>
   <ul class="menu-list">
     <li>
-      <router-link class="button" to="/">Home</router-link>
+      <router-link class="button" to="/">Início</router-link>
     </li>
     <li>
-      <router-link class="button" to="/1">heroes</router-link>
+      <router-link class="button" to="/1">Herói</router-link>
     </li>
     <li>
-      <router-link class="button" to="/2">monsters</router-link>
+      <router-link class="button" to="/2">Monstros</router-link>
     </li>
     <li>
-      <router-link class="button" to="/3">maps</router-link>
+      <router-link class="button" to="/3">Mapas</router-link>
     </li>
     <li>
       <router-link class="button" to="/4">Jogar</router-link>

@@ -20,11 +20,20 @@ export default {
 <style>
 @import 'https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css';
 @import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css';
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap');
 
-*,
+:root {
+  --mo: 'IBM Plex Mono', 'Courier New', Courier, monospace;
+}
+
+/* *,
 *::after,
 *::before {
   box-sizing: border-box;
+} */
+
+.mo {
+  font-family: 'IBM Plex Mono', 'Courier New', Courier, monospace;
 }
 
 .page {
@@ -33,6 +42,9 @@ export default {
   padding: 0.5rem;
 }
 
+.buttons .button {
+  margin-bottom: 0 !important;
+}
 body {
   background: #fefefe;
   font-weight: 400;
@@ -90,9 +102,16 @@ small,
 .relative {
   position: relative;
 }
+
 .top-left {
   top: 0;
   left: 0;
+}
+
+.disabled {
+  pointer-events: none;
+  cursor: not-allowed;
+  filter: grayscale(100%);
 }
 /* Enter and leave animations can use different */
 /* durations and timing functions.              */
@@ -113,5 +132,28 @@ small,
 .poster {
   height: 120px;
   border-radius: 3px;
+}
+
+.modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.4);
+
+  width: 100%;
+  height: 100vh;
+}
+
+.modal-div {
+  background: #fefefe;
+
+  padding: 1rem;
+}
+
+.modal-div.sale {
+  color: red;
 }
 </style>

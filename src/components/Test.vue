@@ -148,7 +148,7 @@
 
       <!-- isBuying -->
       <div v-show="isBuying">
-        <Loja :items="items" @selectTheItem="buyItem" />
+        <Shop :items="items" @selectTheItem="buyItem" />
       </div>
     </div>
     <hr />
@@ -157,7 +157,7 @@
 </template>
 
 <script>
-import Loja from '@/components/Loja.vue';
+import Shop from '@/components/Shop.vue';
 import SelectHero from '@/components/SelectHero.vue';
 import SelectMonsters from '@/components/SelectMonsters.vue';
 import SelectMonsterFight from '@/components/SelectMonsterFight.vue';
@@ -190,7 +190,7 @@ export default {
 
   name: 'Game',
   components: {
-    Loja,
+    Shop,
     SelectHero,
     SelectMonsters,
     SelectMap,

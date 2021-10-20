@@ -1,19 +1,43 @@
 <template>
   <div class="modal" @click.self="closeModal">
-    <div class="modal-content">
-      modal shop
+    <div class="modal-div">
+      saldo: {{ heroMoney }}
+
+      <div class="is-flex is-flex-wrap-wrap">
+        <Card :data="gameItems" table="buyItem" />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import Card from '@/components/Card.vue';
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 export default {
   name: 'ModalShop',
+  components: { Card },
   props: [],
   methods: {
     closeModal() {
       this.$emit('close');
     }
+  },
+  setup() {
+    const store = useStore();
+    let items = computed(() => store.state.user.items);
+    let gameItems = computed(() => store.state.game.items);
+    let heroMonsters = computed(() => store.state.fight.hero.monster);
+    let enemyMonster = computed(() => store.state.fight.enemy.monster);
+    let heroMoney = computed(() => store.state.user.money);
+
+    return {
+      heroMonsters,
+      enemyMonster,
+      items,
+      gameItems,
+      heroMoney
+    };
   }
 };
 </script>
@@ -31,9 +55,5 @@ export default {
 
   width: 100%;
   height: 100vh;
-}
-
-.modal-content {
-  background-color: #fff;
 }
 </style>

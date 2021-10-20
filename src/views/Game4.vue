@@ -4,132 +4,103 @@
       <Navigation />
       <h4>Jogar</h4>
 
-      <Error
-        :error="isEmpty(hero) && 'O herói não foi escolhido'"
-        type="is-warning"
-      />
-      <Error
-        :error="isEmpty(map) && 'O mapa não foi escolhido'"
-        type="is-warning"
-      />
-      <Error
-        :error="monsters.length === 0 && 'Os monstros não foram escolhidos'"
-        type="is-warning"
-      />
+      <div class="is-4" style="display: flex; flex-wrap: wrap; gap: 4px;">
+        <Error
+          :error="isEmpty(hero) && 'O herói não foi escolhido'"
+          type="is-warning"
+        />
+        <Error
+          :error="isEmpty(map) && 'O mapa não foi escolhido'"
+          type="is-warning"
+        />
+        <Error
+          :error="monsters.length === 0 && 'Os monstros não foram escolhidos'"
+          type="is-warning"
+          style="height: 68px;"
+        />
+      </div>
 
       <main>
         <div class="buttons mb-2 menu-sticky">
-          <div class="button is-danger" @click="play">
+          <button
+            class="button is-danger"
+            @click="play"
+            :disabled="
+              isEmpty(map) ||
+                monsters.length === 0 ||
+                isEmpty(hero) ||
+                isFighting
+            "
+          >
             Play
-          </div>
-          <div class="button is-info" @click="toggleModal">Loja</div>
-          <div class="button is-warning">Reiniciar</div>
+          </button>
+          <button class="button is-info" @click="toggleModal">Loja</button>
+          <button class="button is-warning" @click="restart">Reiniciar</button>
         </div>
 
         <!-- actual postion -->
         Posição atual: {{ current }} - Valor do dado: {{ dice }} - Tamanho do
-        mapa:
-        {{ positions.length }}
+        mapa: {{ positions.length }} - items {{ items.length }} - Gift
+        {{ isGifting }}
 
         <!-- fight -->
         <Fight v-if="isFighting" />
 
-        <!-- positions -->
-        <div class="is-flex is-flex-wrap-wrap ">
-          <div class="" v-for="(position, i) in positions" :key="i">
-            <div
-              style="position: relative"
-              :class="
-                `position ${
-                  position === 'FIGHT'
-                    ? 'fight'
-                    : position === 'TRAP'
-                    ? 'trap'
-                    : position === 'GIFT'
-                    ? 'gift'
-                    : position === 'BOSS'
-                    ? 'boss'
-                    : position === 'START'
-                    ? 'start'
-                    : ''
-                } ${i == current ? 'current ' : ''} ${
-                  current > i ? 'passed' : ''
-                }`
-              "
-            >
-              {{ current > i ? '...' : position }}
-              <span class="absolute top-left card-item-id">{{ i }}</span>
-            </div>
-          </div>
-        </div>
+        <!-- gift -->
+        <ModalGift v-if="isGifting" />
 
         <!-- shop -->
         <ModalShop v-if="showModal" @close="toggleModal" />
+
+        <!-- positions -->
+        <Positions :positions="positions" :current="current" />
       </main>
 
       <hr />
+      <Info v-if="!isEmpty(hero)" :item="hero" name="HERO" />
+      <InfoList :items="monsters" name="MONSTER" />
+      <Info v-if="!isEmpty(map)" :item="map" name="MAP" />
+      <InfoList :items="items" name="ITEM" />
 
-      <span class="has-text-danger is-size-5">hero</span>
-      <div class="list-item">
-        <span><b>Name:</b> {{ hero.name }}</span
-        >, <span><b>Tipo:</b> {{ hero.type }}</span
-        >, <span><b>Gênero:</b> {{ hero.gender }}</span>
-      </div>
-
-      <hr />
-
-      <span class="has-text-danger is-size-5">monsters</span>
-      <div class="list-item" v-for="monster in monsters" :key="monster.id">
-        <div>
-          <span><b>Name:</b> {{ monster.name }}</span
-          >, <span><b>Tipo:</b> {{ monster.type }}</span
-          >, <span><b>Gênero:</b> {{ monster.gender }}</span>
-        </div>
-      </div>
-
-      <hr />
-
-      <span class="has-text-danger is-size-5">map</span>
-      <div class="list-item">
-        <span><b>Name:</b> {{ map.name }}</span
-        >, <span><b>Tipo:</b> {{ map.type }}</span
-        >, <span><b>Tamanho:</b> {{ map.size }}</span>
-      </div>
-
-      <hr />
-
-      <span class="has-text-danger is-size-5">items</span>
-      <div class="list-item" v-for="item in items" :key="item.id">
-        <div>
-          <span><b>Name:</b> {{ item.name }}</span
-          >, <span><b>Tipo:</b> {{ item.type }}</span
-          >, <span><b>Gênero:</b> {{ item.gender }}</span>
-        </div>
-      </div>
-
-      <hr />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
     </div>
   </transition>
 </template>
 
 <script>
+import Info from '@/components/Info.vue';
+import InfoList from '@/components/InfoList.vue';
 import Navigation from '@/components/Navigation.vue';
 import Error from '@/components/Error.vue';
 import ModalShop from '@/components/ModalShop.vue';
 import Fight from '@/components/Fight.vue';
+import ModalGift from '@/components/ModalGift.vue';
+import Positions from '@/components/Positions.vue';
 import { useStore } from 'vuex';
-import { computed } from 'vue/';
-import { isEmpty } from '@/utils';
-import { onMounted } from '@vue/runtime-core';
+import { computed, onMounted } from 'vue';
 import { getData } from '@/composables/getData';
+import { randomNumber, isEmpty } from '@/utils';
 
 export default {
   name: 'Game',
   props: ['data'],
-  components: { ModalShop, Navigation, Error, Fight },
+  components: {
+    ModalShop,
+    Navigation,
+    Error,
+    Fight,
+    ModalGift,
+    Positions,
+    Info,
+    InfoList
+  },
   data() {
     return {
-      item: {},
       showModal: false
     };
   },
@@ -149,20 +120,28 @@ export default {
     let current = computed(() => store.state.game.position);
     let dice = computed(() => store.state.game.dice);
     let isFighting = computed(() => store.state.status.isFighting);
+    let isGifting = computed(() => store.state.status.isGifting);
 
     function play() {
-      store.commit('randomNumber', { max: 6, min: 1 });
-      store.commit('getPosition', dice.value);
+      let x = randomNumber(6, 1);
+      store.commit('getPosition', x);
     }
 
-    function loadMonsters() {
-      const { items, load } = getData('monsters');
+    function loadData() {
+      const { items: gameMonsters, load: l1 } = getData('monsters');
+      const { items: shopItems, load: l2 } = getData('items');
 
-      load();
-      store.commit('loadMonsters', { monsters: items });
+      l1();
+      l2();
+      store.commit('loadMonsters', { monsters: gameMonsters });
+      store.commit('loadShopItems', { items: shopItems });
+    }
+
+    function restart() {
+      store.commit('restartGame');
     }
     onMounted(() => {
-      loadMonsters();
+      loadData();
     });
 
     return {
@@ -175,7 +154,9 @@ export default {
       dice,
       isEmpty,
       play,
-      isFighting
+      restart,
+      isFighting,
+      isGifting
     };
   }
 };
@@ -187,51 +168,7 @@ export default {
   z-index: 500;
   top: 0;
   background: white;
-}
-
-.position {
-  height: 100px;
-  width: 100px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.current {
-  outline: 3px dashed crimson;
-}
-
-.position.start {
-  background: #c0f5ff;
-  color: #000;
-}
-
-.position.fight {
-  background: #ffcdf3;
-  color: #000;
-}
-
-.position.gift {
-  background: #beffbe;
-  color: #000;
-}
-
-.position.trap {
-  background: #fbffc4;
-  color: #000;
-}
-
-.position.boss {
-  background: black;
-  color: #fff;
-}
-
-.passed {
-  background: #161616 !important;
-  color: #919191 !important;
+  padding: 8px;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
 }
 </style>

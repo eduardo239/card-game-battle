@@ -1,38 +1,24 @@
 <template>
   <h4>Luta</h4>
-  <div class="fight">
-    <button class="button is-danger" @click="hit">hit</button>
-    <button class="button is-info">use item</button>
+  <div class="fight buttons">
+    <button class="button is-danger" @click="hit">ATACAR</button>
+    <button class="button is-info">USAR ITEM</button>
+    <!-- TODO: useItem -->
   </div>
-  {{ hero }}
-  {{ monster }}
-  <hr />
-  <span class="has-text-danger is-size-5">hero monster</span>
-  <div class="list-item">
-    <span><b>Name:</b> {{ hero.name }}</span
-    >, <span><b>Tipo:</b> {{ hero.type }}</span
-    >, <span><b>Gênero:</b> {{ hero.gender }}</span
-    >, <span><b>HP:</b> {{ hero.hp }}</span
-    >, <span><b>MP:</b> {{ hero.mp }}</span>
-  </div>
-  <br />
-  <span class="has-text-danger is-size-5">enemy monster</span>
-  <div class="list-item">
-    <span><b>Name:</b> {{ monster.name }}</span
-    >, <span><b>Tipo:</b> {{ monster.type }}</span
-    >, <span><b>Gênero:</b> {{ monster.gender }}</span
-    >, <span><b>HP:</b> {{ monster.hp }}</span
-    >, <span><b>MP:</b> {{ monster.mp }}</span>
-  </div>
+
+  <Info :item="hero" name="HERO" />
+  <Info :item="monster" name="MONSTER" />
 </template>
 
 <script>
+import Info from '@/components/Info.vue';
 import { computed } from 'vue/';
 import { useStore } from 'vuex';
 import { randomNumber } from '@/utils';
 
 export default {
   name: 'Fight',
+  components: { Info },
   props: ['isFighting'],
   setup() {
     const store = useStore();
@@ -59,5 +45,7 @@ export default {
   z-index: 600;
   background: #fff;
   top: 0;
+  padding: 8px;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
 }
 </style>
