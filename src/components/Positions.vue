@@ -1,5 +1,6 @@
 <template>
   <h4>MAPA</h4>
+
   <div class="board">
     <div v-for="(position, i) in positions" :key="i">
       <div
@@ -30,7 +31,10 @@
 <script>
 export default {
   name: 'Positions',
-  props: ['positions', 'current']
+  props: ['positions', 'current'],
+  setup() {
+    return {};
+  }
 };
 </script>
 
@@ -46,8 +50,8 @@ export default {
   overflow-x: scroll;
   overflow-y: hidden;
 
-  padding: 4px;
-  border: 2px solid black;
+  padding: 1rem;
+  border: 2px solid #222222;
 }
 .position {
   height: 100px;
@@ -64,22 +68,22 @@ export default {
 }
 
 .position.start {
-  background: #c0f5ff;
+  background: #000000;
   color: #000;
 }
 
 .position.fight {
-  background: #ffcdf3;
-  color: #000;
+  background: #f8345f;
+  color: #e6e6e6;
 }
 
 .position.gift {
-  background: #beffbe;
+  background: #4c9b4c;
   color: #000;
 }
 
 .position.trap {
-  background: #fbffc4;
+  background: #e3ee4e;
   color: #000;
 }
 

@@ -1,6 +1,9 @@
 <template>
   <div class="modal" @click.self="closeModal">
     <div class="modal-div">
+      <h4 style="background: white; text-align: center;">
+        Parabéns você ganhou um item.
+      </h4>
       <div class="is-flex is-flex-wrap-wrap is-justify-content-center">
         <CardItem :data="gift" @closeModal="closeModal" />
       </div>

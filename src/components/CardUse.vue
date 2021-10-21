@@ -11,7 +11,7 @@
         <span v-if="x.type">TIPO: {{ x.type.toUpperCase() }}</span>
       </div>
 
-      <div class="is-flex is-justify-content-space-between is-size-7 mb-5">
+      <div class="is-flex is-justify-content-space-between is-size-7 ">
         <span v-if="x.level">LVL: {{ x.level }}</span>
         <span v-if="x.exp">EXP: {{ x.exp }}</span>
         <span v-if="x.nextLevel">NEX: {{ x.nextLevel }}</span>
@@ -19,10 +19,25 @@
         <span v-if="x.size">TAMANHO: {{ x.size }}</span>
       </div>
 
+      <div class="is-flex is-justify-content-space-between is-size-7 mb-5">
+        <span v-if="x.hp">HP: {{ x.hp }}</span>
+        <span v-if="x.mp">MP: {{ x.mp }}</span>
+      </div>
+
       <button
         style="width: 100%"
         class="button is-link"
-        @click="useItem(table === 'useItem' ? 'useItem' : '', x, i)"
+        @click="
+          useItem(
+            table === 'useItem'
+              ? 'useItem'
+              : table === 'selectMonster'
+              ? 'selectMonster'
+              : '',
+            x,
+            i
+          )
+        "
       >
         Usar
       </button>
@@ -33,13 +48,13 @@
 <script>
 import { computed } from 'vue';
 import { useStore } from 'vuex';
+
 export default {
   name: 'CardUse',
   props: ['data', 'table'],
   emits: ['closeModal'],
   methods: {
     closeModal() {
-      console.log(2);
       this.$emit('close');
     }
   },
@@ -48,7 +63,12 @@ export default {
     let items = computed(() => store.state.user.items);
 
     function useItem(table, item, i) {
-      let func = table === 'useItem' ? 'useItem' : '';
+      let func =
+        table === 'useItem'
+          ? 'useItem'
+          : table === 'selectMonster'
+          ? 'selectMonster'
+          : '';
       store.commit(func, { item, i });
     }
 

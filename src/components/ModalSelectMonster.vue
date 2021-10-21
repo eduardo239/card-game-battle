@@ -1,10 +1,16 @@
 <template>
   <div class="modal" @click.self="closeModal">
     <div class="modal-div">
-      <div v-if="items.length > 0" class="is-flex is-flex-wrap-wrap">
-        <CardUse :data="items" table="useItem" />
+      <h4 style="background: white; text-align: center;">
+        Selecione um monstro para lutar.
+      </h4>
+      <div
+        v-if="monsters.length > 0"
+        class="is-flex is-flex-wrap-wrap is-justify-content-center"
+      >
+        <CardUse :data="monsters" table="selectMonster" />
       </div>
-      <div v-else>Você não possui items.</div>
+      <div v-else>Você não possui monstros.</div>
     </div>
   </div>
 </template>
@@ -15,7 +21,7 @@ import { useStore } from 'vuex';
 import { computed } from 'vue';
 
 export default {
-  name: 'ModalUseItem',
+  name: 'ModalSelectMonster',
   components: { CardUse },
   methods: {
     closeModal() {
@@ -24,10 +30,10 @@ export default {
   },
   setup() {
     const store = useStore();
-    let items = computed(() => store.state.user.items);
+    let monsters = computed(() => store.state.user.monsters);
 
     return {
-      items
+      monsters
     };
   }
 };

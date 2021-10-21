@@ -1,5 +1,5 @@
 <template>
-  <ul class="menu-list">
+  <ul class="menu-list mb-4">
     <li>
       <router-link class="button" to="/">Início</router-link>
     </li>

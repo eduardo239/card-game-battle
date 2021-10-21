@@ -2,57 +2,41 @@
   <transition name="slide-fade">
     <div class="page">
       <Navigation />
-      <h4>Jogar</h4>
 
-      <div class="is-4" style="display: flex; flex-wrap: wrap; gap: 4px;">
+      <div>
         <Error
-          :error="isEmpty(hero) && 'O herói não foi escolhido'"
+          :error="isEmpty(hero)"
+          :message="'O herói não foi escolhido'"
           type="is-warning"
         />
         <Error
-          :error="isEmpty(map) && 'O mapa não foi escolhido'"
+          :error="isEmpty(map)"
+          :message="'O mapa não foi escolhido'"
           type="is-warning"
         />
         <Error
-          :error="monsters.length === 0 && 'Os monstros não foram escolhidos'"
+          :error="monsters.length === 0"
+          :message="'Os monstros não foram escolhidos'"
           type="is-warning"
-          style="height: 68px;"
         />
       </div>
 
       <main>
-        <div class="buttons mb-2 menu-sticky">
-          <button
-            class="button is-danger"
-            @click="play"
-            :disabled="
-              isEmpty(map) ||
-                monsters.length === 0 ||
-                isEmpty(hero) ||
-                isFighting
-            "
-          >
-            Play
-          </button>
-          <button
-            class="button is-info"
-            @click="toggleModal"
-            :disabled="isFighting"
-          >
-            Loja
-          </button>
-          <button class="button is-warning" @click="restart">Reiniciar</button>
-        </div>
+        <MenuPlay
+          @restart="restart"
+          @toggleModal="toggleModal"
+          @play="play"
+          :isDisabled="
+            isEmpty(map) || monsters.length === 0 || isEmpty(hero) || isFighting
+          "
+          :isFighting="isFighting"
+        />
 
         <!-- actual postion -->
         <small class="mo">
           Posição atual: {{ current }} - Valor do dado: {{ dice }} - Tamanho do
-          mapa: {{ positions.length }} - items {{ items.length }} - Gift
-          {{ isGifting }}
+          mapa: {{ positions.length }} - items {{ items.length }}
         </small>
-
-        <!-- fight -->
-        <Fight v-if="isFighting" @toggleUseItemModal="toggleUseItemModal" />
 
         <!-- gift -->
         <ModalGift v-if="isGifting" />
@@ -60,8 +44,18 @@
         <!-- shop -->
         <ModalShop v-if="showModal" @close="toggleModal" />
 
+        <!-- select monster -->
+        <ModalSelectMonster v-if="isSelectingMonster" />
+
+        <!-- fight -->
+        <Fight v-if="isFighting" @toggleUseItemModal="toggleUseItemModal" />
+
         <!-- positions -->
-        <Positions :positions="positions" :current="current" />
+        <Positions
+          v-if="!isEmpty(map)"
+          :positions="positions"
+          :current="current"
+        />
 
         <!-- useItem -->
         <ModalUseItem v-if="showUseItemModal" @close="toggleUseItemModal" />
@@ -76,14 +70,13 @@
       <br />
       <br />
       <br />
-      <br />
-      <br />
-      <br />
     </div>
   </transition>
 </template>
 
 <script>
+import ModalSelectMonster from '@/components/ModalSelectMonster.vue';
+import MenuPlay from '@/components/MenuPlay.vue';
 import Info from '@/components/Info.vue';
 import InfoList from '@/components/InfoList.vue';
 import Navigation from '@/components/Navigation.vue';
@@ -94,7 +87,7 @@ import ModalGift from '@/components/ModalGift.vue';
 import Positions from '@/components/Positions.vue';
 import ModalUseItem from '@/components/ModalUseItem.vue';
 import { useStore } from 'vuex';
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 import { getData } from '@/composables/getData';
 import { randomNumber, isEmpty } from '@/utils';
 
@@ -102,8 +95,10 @@ export default {
   name: 'Game',
   props: ['data'],
   components: {
+    MenuPlay,
     ModalShop,
     ModalUseItem,
+    ModalSelectMonster,
     Navigation,
     Error,
     Fight,
@@ -115,7 +110,8 @@ export default {
   data() {
     return {
       showModal: false,
-      showUseItemModal: false
+      showUseItemModal: false,
+      showSelectMonsterModal: false
     };
   },
   methods: {
@@ -138,6 +134,10 @@ export default {
     let dice = computed(() => store.state.game.dice);
     let isFighting = computed(() => store.state.status.isFighting);
     let isGifting = computed(() => store.state.status.isGifting);
+    // let isOver = computed(() => store.state.status.isOver);
+    let isSelectingMonster = computed(
+      () => store.state.status.isSelectingMonster
+    );
 
     function play() {
       let x = randomNumber(6, 1);
@@ -157,9 +157,17 @@ export default {
     function restart() {
       store.commit('restartGame');
     }
+
     onMounted(() => {
       loadData();
     });
+
+    watch(
+      () => store.getters.isOver,
+      () => {
+        restart();
+      }
+    );
 
     return {
       hero,
@@ -173,7 +181,8 @@ export default {
       play,
       restart,
       isFighting,
-      isGifting
+      isGifting,
+      isSelectingMonster
     };
   }
 };

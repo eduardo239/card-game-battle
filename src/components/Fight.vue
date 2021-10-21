@@ -5,10 +5,12 @@
     <button class="button is-info" @click="$emit('toggleUseItemModal')">
       USAR ITEM
     </button>
-    <!-- TODO: useItem -->
+    <button class="button is-light">Trocar de monstro</button>
   </div>
 
+  <span class="has-text-danger">Monstro do herói</span>
   <Info :item="hero" name="HERO" />
+  <span class="has-text-danger">Monstro do inimigo</span>
   <Info :item="monster" name="MONSTER" />
 </template>
 
@@ -33,6 +35,7 @@ export default {
       let damage = parseInt(randomNumber(50, 35));
       store.commit('damage', { damage, at: 'enemy' });
     }
+
     return {
       hero,
       monster,

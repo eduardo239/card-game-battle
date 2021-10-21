@@ -7,7 +7,7 @@ export default createStore({
       hero: {},
       monsters: [],
       items: [],
-      money: 300
+      money: 500
     },
     game: {
       map: {},
@@ -20,7 +20,8 @@ export default createStore({
     },
     fight: {
       hero: {
-        monster: {}, // ref to user.monsters[x]
+        monster: {},
+        monsterIndex: null,
         damageMax: 0,
         damageMin: 0,
         win: false
@@ -33,11 +34,18 @@ export default createStore({
     },
     status: {
       isFighting: false,
+      isSelectingMonster: false,
       isBuying: false,
       isGifting: false,
       isStarted: false,
       isOn: true,
-      isUsingItem: false
+      isUsingItem: false,
+      isOver: false
+    }
+  },
+  getters: {
+    isOver(state) {
+      return state.status.isOver;
     }
   },
   mutations: {
@@ -92,7 +100,6 @@ export default createStore({
       }
     },
     useItem(state, payload) {
-      console.log(payload);
       if (payload.item.type === 'health') {
         state.fight.hero.monster.hp += parseInt(payload.item.value);
         state.user.items.splice(payload.i, 1);
@@ -111,8 +118,20 @@ export default createStore({
     closeGiftModal(state) {
       state.status.isGifting = false;
     },
+    closeSelectMonsterModal(state) {
+      state.status.isSelectingMonster = false;
+    },
     loadMonsters(state, payload) {
       state.game.monsters = payload.monsters;
+    },
+    selectMonster(state, payload) {
+      if (state.user.monsters.length === 0) {
+        alert('Você não possui mais monstros....');
+      }
+      state.fight.hero.monster = state.user.monsters[payload.i];
+      state.fight.hero.monsterIndex = payload.i;
+      state.status.isFighting = true;
+      state.status.isSelectingMonster = false;
     },
     loadShopItems(state, payload) {
       state.game.items = payload.items;
@@ -126,15 +145,10 @@ export default createStore({
       let pos = state.game.positions[state.game.position];
 
       if (pos === 'FIGHT') {
-        // fight.............
-        console.log('Lutando...');
+        state.status.isSelectingMonster = true;
 
-        state.status.isFighting = true;
-
-        if (state.user.monsters[0]) {
-          state.fight.hero.monster = state.user.monsters[0];
-        } else {
-          alert('sem monstros');
+        if (state.user.monsters.length === 0) {
+          alert('Você não possui mais monstros.');
         }
         // seleciona um monstro aleatório
         let x = randomNumber(state.game.monsters.length, 1);
@@ -146,22 +160,37 @@ export default createStore({
         state.game.gift = { ...state.game.items[y - 1] };
         state.user.items.push({ ...state.game.items[y - 1] });
       } else if (pos === 'TRAP') {
+        // fake damage
         let w = randomNumber(30, 5);
         state.user.hero.hp -= w;
-        console.log('trap...');
       } else if (pos === 'BOSS') {
         console.log('Boss...');
       }
     },
     damage(state, payload) {
-      // fake damage
-      state.fight.hero.monster.hp -= 30;
-
       if (payload.at === 'enemy') {
         state.fight.enemy.monster.hp -= payload.damage;
-        if (state.fight.enemy.monster.hp < 0) {
+        // fake damage
+        state.fight.hero.monster.hp -= 33;
+
+        // Check enemy monster
+        if (state.fight.enemy.monster.hp < 1) {
           state.status.isFighting = false;
-          console.log('end fight');
+          state.fight.enemy.monster = {};
+        }
+        // Check hero monster
+        if (state.fight.hero.monster.hp < 1) {
+          // pop
+          state.user.monsters.splice(state.fight.hero.monsterIndex, 1);
+          state.fight.hero.monsterIndex = null;
+
+          // selecionar outro monstro se houver
+          if (state.user.monsters.length === 0) {
+            state.status.isOver = true;
+            alert('GAME OVER');
+          }
+          state.status.isFighting = false;
+          state.fight.hero.monster = {};
         }
       }
     },
@@ -173,10 +202,11 @@ export default createStore({
       state.user.hero = {};
       state.user.monsters = [];
       state.user.items = [];
-      state.user.money = 300;
+      state.user.money = 500;
       state.status.isFighting = false;
       state.fight.hero.monster = {};
       state.fight.enemy.monster = {};
+      state.status.isOver = false;
     }
   }
 });

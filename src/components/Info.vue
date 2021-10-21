@@ -8,7 +8,9 @@
     <span v-if="item.mp"><b>MP:</b> {{ item.mp }}</span>
     <span v-if="item.size"><b>Tamanho:</b> {{ item.size }}</span>
     <span v-if="item.level"><b>Level:</b> {{ item.level }}</span>
-    <button class="delete" @click="removeItem(name)">x</button>
+    <button class="delete" @click="removeItem(name)">
+      x
+    </button>
   </div>
 </template>
 
