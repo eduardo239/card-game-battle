@@ -10,5 +10,5 @@ cd dist
 git init
 git add -A
 git commit -m 'deploy'
-git push -f git@github.com:eduardo239/vue-card-game.git master:gh-pages
+git push -f git@github.com:eduardo239/vue-card-game.git main:gh-pages
 cd -
